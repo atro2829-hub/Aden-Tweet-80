@@ -20,3 +20,4 @@ out/
 .idea/workspace.xml
 .idea/libraries
 app/build/
+app/adentweet-release.jks
