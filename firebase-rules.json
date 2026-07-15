@@ -1,0 +1,88 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('admin').val() === true)",
+        "posts": {
+          ".indexOn": [".value"]
+        },
+        "following": {
+          ".indexOn": [".value"]
+        },
+        "followers": {
+          ".indexOn": [".value"]
+        },
+        "likedPosts": {
+          ".indexOn": [".value"]
+        },
+        "bookmarks": {
+          ".indexOn": [".value"]
+        },
+        "lists": {
+          ".indexOn": [".value"]
+        },
+        "notifications": {
+          ".indexOn": ["createdAt", "isRead"],
+          "$notifId": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null"
+          }
+        }
+      },
+      ".indexOn": ["username", "createdAt"]
+    },
+    "posts": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["createdAt", "authorId", "likeCount", "replyCount", "text"],
+      "$postId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid === data.child('authorId').val() || !data.exists())",
+        "likes": {
+          "$uid": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+        "replies": {
+          "$replyId": {
+            ".read": "auth != null",
+            ".write": "auth != null"
+          }
+        },
+        "reposts": {
+          "$uid": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    },
+    "conversations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["lastMessageTimestamp", "participant1Id", "participant2Id"],
+      "$convId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "messages": {
+          ".indexOn": ["createdAt"],
+          "$msgId": {
+            ".read": "auth != null",
+            ".write": "auth != null"
+          }
+        }
+      }
+    },
+    "lists": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["createdBy", "createdAt"],
+      "$listId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
+  }
+}
